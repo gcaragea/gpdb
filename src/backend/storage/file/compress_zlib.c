@@ -1,7 +1,7 @@
 /* compress_zlib.c */
 #include "c.h"
 #include "storage/bfz.h"
-#include <zlib.h>
+#include "utils/zlib_wrapper.h"
 
 struct bfz_zlib_freeable_stuff
 {
@@ -25,8 +25,8 @@ bfz_zlib_close_ex(bfz_t * thiz)
 
 	if (fs->f)
 	{
-		/* gzclose also closes thiz->fd */
-		gzclose(fs->f);
+		/* gp_gzclose also closes thiz->fd */
+		gp_gzclose(fs->f);
 		thiz->fd = -1;
 	}
 	pfree(fs);
@@ -108,9 +108,9 @@ bfz_zlib_init(bfz_t * thiz)
 	fs->super.close_ex = bfz_zlib_close_ex;
 
 	if (thiz->mode == BFZ_MODE_APPEND)
-		fs->f = gzdopen(thiz->fd, "wb1");
+		fs->f = gp_gzdopen(thiz->fd, "wb1");
 	else
-		fs->f = gzdopen(thiz->fd, "rb");
+		fs->f = gp_gzdopen(thiz->fd, "rb");
 
 	if (!fs->f)
 		ereport(ERROR,
