@@ -29,7 +29,7 @@ bfz_zlib_close_ex(bfz_t * thiz)
 		gzclose(fs->f);
 		thiz->fd = -1;
 	}
-	free(fs);
+	pfree(fs);
 	thiz->freeable_stuff = NULL;
 }
 
@@ -89,7 +89,13 @@ bfz_zlib_read_ex(bfz_t * thiz, char *buffer, int size)
 void
 bfz_zlib_init(bfz_t * thiz)
 {
-	struct bfz_zlib_freeable_stuff *fs = malloc(sizeof *fs);
+	/*
+	 * Check that we are allocating in the TopMemoryContext since this
+	 * memory context must still be available when calling the transaction
+	 * callback at the time when the transaction aborts.
+	 */
+	Assert(TopMemoryContext == CurrentMemoryContext);
+	struct bfz_zlib_freeable_stuff *fs = palloc(sizeof *fs);
 
 	if (!fs)
 		ereport(ERROR,
