@@ -77,7 +77,6 @@ rsa_bsafe_sha_256_digest(const char *str, char *digest)
     R_LIB_CTX *lib_ctx = NULL;
     R_CR_CTX *ctx = NULL;
     R_CR *dgst_obj = NULL;
-    char *string;
     unsigned char dgst_buf[R_CR_DIGEST_MAX_LEN];
     unsigned int dgst_len = sizeof(dgst_buf);
     R_PROV *provider = NULL;
@@ -89,7 +88,6 @@ rsa_bsafe_sha_256_digest(const char *str, char *digest)
 
     /* Set the default values for the digest operation */
     alg_id = R_CR_ID_SHA256;
-    string = NULL;
 
 
     /*************************************************************************
