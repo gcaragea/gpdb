@@ -177,6 +177,12 @@ installcheck-good: all
 	PGUSER="gpadmin/kerberos-test" $(pg_regress_call)  --psqldir=$(PSQLDIR) --schedule=$(srcdir)/parallel_schedule --schedule=$(srcdir)/greenplum_schedule --srcdir=$(abs_srcdir) --host=`hostname`; \
 	fi
 
+installcheck-qp: all
+	@echo "================================"
+	@echo "Installcheck-QP starting ... " 
+	@echo "================================"
+	$(pg_regress_call)  --psqldir=$(PSQLDIR) --schedule=$(srcdir)/qp_schedule --srcdir=$(abs_srcdir); \
+
 testbouncer: all
 	bash -c "bouncer/setup.sh"
 	$(pg_regress_call)  --port=65432 --psqldir=$(PSQLDIR) --schedule=./minimal_schedule --srcdir=$(abs_srcdir) --host=`hostname`;
