@@ -122,6 +122,7 @@
 #include "utils/tuplesort_mk.h"
 #include "utils/string_wrapper.h"
 #include "utils/faultinjector.h"
+#include "utils/debugbreak.h"
 
 #include "cdb/cdbvars.h"
 
@@ -1459,6 +1460,12 @@ tuplesort_gettuple_common_pos(Tuplesortstate_mk *state, TuplesortPos_mk *pos,
             AssertEquivalent((pos == &state->pos), (pos->cur_work_tape == NULL));
             Assert(forward || state->randomAccess);
             *should_free = true;
+
+        	if (Gp_segment == 0)
+        	{
+        		debug_break_timed(20, false);
+        	}
+
             work_tape =	pos->cur_work_tape == NULL ? state->result_tape : pos->cur_work_tape; 
 
             if (forward)
@@ -1554,17 +1561,18 @@ tuplesort_gettuple_common_pos(Tuplesortstate_mk *state, TuplesortPos_mk *pos,
  * If successful, put tuple in slot and return TRUE; else, clear the slot
  * and return FALSE.
  */
-    bool
+bool
 tuplesort_gettupleslot_mk(Tuplesortstate_mk *state, bool forward,
         TupleTableSlot *slot)
 {
     return tuplesort_gettupleslot_pos_mk(state, &state->pos, forward, slot);
 }
 
-    bool
+bool
 tuplesort_gettupleslot_pos_mk(Tuplesortstate_mk *state, TuplesortPos_mk *pos,
         bool forward, TupleTableSlot *slot)
 {
+
     MemoryContext oldcontext = MemoryContextSwitchTo(state->sortcontext);
     MKEntry	e; 
 

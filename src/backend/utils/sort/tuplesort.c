@@ -116,6 +116,7 @@
 #include "utils/pg_rusage.h"
 #include "utils/syscache.h"
 #include "utils/tuplesort.h"
+#include "utils/debugbreak.h"
 
 #include "cdb/cdbvars.h"
 
@@ -1540,6 +1541,12 @@ bool
 tuplesort_gettupleslot_pos(Tuplesortstate *state, TuplesortPos *pos,
 		bool forward, TupleTableSlot *slot)
 {
+
+	if (Gp_segment == 0)
+	{
+		debug_break_timed(20, false);
+	}
+
 	MemoryContext oldcontext = MemoryContextSwitchTo(state->sortcontext);
 	SortTuple	stup;
 	bool		should_free = false;
