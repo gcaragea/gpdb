@@ -1,0 +1,35 @@
+BEGIN;
+BEGIN
+SET gp_simex_run=on;
+SET
+select  'tpch1',
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '108 day'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;
+ ?column? | l_returnflag | l_linestatus |  sum_qty   | sum_base_price | sum_disc_price  |     sum_charge     |       avg_qty       |     avg_price      |        avg_disc        | count_order 
+----------+--------------+--------------+------------+----------------+-----------------+--------------------+---------------------+--------------------+------------------------+-------------
+ tpch1    | A            | F            | 3774200.00 |  5320753880.69 | 5054096266.6828 |  5256751331.449234 | 25.5375871168549970 | 36002.123829014142 | 0.05014459706340077136 |      147790
+ tpch1    | N            | F            |   95257.00 |   133737795.84 |  127132372.6512 |   132286291.229445 | 25.3006640106241700 | 35521.326916334661 | 0.04939442231075697211 |        3765
+ tpch1    | N            | O            | 7362148.00 | 10374748616.11 | 9855622686.4483 | 10249720081.352165 | 25.5449195708595301 | 35997.934158131046 | 0.05009496745360924900 |      288204
+ tpch1    | R            | F            | 3785523.00 |  5337950526.47 | 5071818532.9420 |  5274405503.049367 | 25.5259438574251017 | 35994.029214030924 | 0.04998927856184381764 |      148301
+(4 rows)
+
+COMMIT;
+COMMIT
